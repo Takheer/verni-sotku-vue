@@ -1,12 +1,14 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import {signIn, registerNewUser} from "@/db/auth.ts";
+import {registerNewUser} from "@/db/auth.ts";
+import {useAuthApi} from "@/db/useAuthApi.ts";
 
 type TCredentials = { email: string, password: string }
+const authApi = useAuthApi()
 
 export const useUserStore = defineStore('counter', () => {
   const userId = ref('')
-  let user = ref({})
+  const user = ref({})
 
   async function createUser({ email , password }: TCredentials) {
     const res = await registerNewUser(email, password);
@@ -20,13 +22,14 @@ export const useUserStore = defineStore('counter', () => {
     }
   }
 
-  async function signInUser({ email, password }: TCredentials) {
-    const res = await signIn(email, password);
+  async function getCurrentUser() {
+    const res = await authApi.getCurrentUser();
 
-    if (res.user) {
-      localStorage.setItem('uid', res.user.uid);
-      userId.value = res.user.uid
-      return { user: res.user }
+    if (res) {
+      localStorage.setItem('user', JSON.stringify(res));
+      user.value = res
+      console.log('user.value', user.value)
+      return { user: res }
     } else {
       return res;
     }
@@ -37,5 +40,5 @@ export const useUserStore = defineStore('counter', () => {
     userId.value = '';
   }
 
-  return { userId, user, createUser, signInUser, signOut }
+  return { userId, user, createUser, getCurrentUser, signOut }
 })

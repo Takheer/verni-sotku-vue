@@ -2,7 +2,9 @@
 import AddSpendingForm from "@/components/AddSpendingForm.vue";
 import SpendingList from "@/components/SpendingList.vue";
 import {onMounted, ref} from "vue";
-import {allRows, getStatistics} from "@/db/spendings.ts";
+import {addRow, allRows, getStatistics} from "@/db/spendings.ts";
+import {getCookie} from "@/utils/cookies.ts";
+import {useUserStore} from "@/stores/user.ts";
 
 export type Person = {
   id: number,
@@ -49,6 +51,8 @@ const peopleWhom: Person[] = [
   { id: 5, name: 'Всем', bgColor: '#CFD8DC', textColor: '#607D8B' }
 ]
 
+const userStore = useUserStore();
+
 const headings = ref<string[]>([])
 const spendingList = ref<Spending[]>([])
 const spendingListFiltered = ref<Spending[]>([])
@@ -85,23 +89,29 @@ function clearFilter() {
 }
 
 onMounted(async () => {
-  const [data, statistics] = await Promise.all([
-    allRows(),
-    getStatistics(),
-  ]);
-
-  statsTable.value = statistics;
-
-  headings.value = data[0]
-  data.splice(0, 1)
-  spendingList.value = data.reverse().map(row => ({
-    who: peopleWho.find(p => p.name === row[0]) || {} as Person,
-    whom: peopleWhom.find(p => p.name === row[1]) || {} as Person,
-    sum: parseFloat(row[2].replace(",", "")),
-    comment: row[3]
-  }))
-
-  spendingListFiltered.value = spendingList.value;
+  console.log(getCookie('token') && !userStore.user?.id)
+  console.log(userStore.user)
+  if (getCookie('token') && !userStore.user?.id) {
+    await userStore.getCurrentUser()
+  }
+  console.log(userStore.user)
+  // const [data, statistics] = await Promise.all([
+  //   allRows(),
+  //   getStatistics(),
+  // ]);
+  //
+  // statsTable.value = statistics;
+  //
+  // headings.value = data[0]
+  // data.splice(0, 1)
+  // spendingList.value = data.reverse().map(row => ({
+  //   who: peopleWho.find(p => p.name === row[0]) || {} as Person,
+  //   whom: peopleWhom.find(p => p.name === row[1]) || {} as Person,
+  //   sum: parseFloat(row[2].replace(",", "")),
+  //   comment: row[3]
+  // }))
+  //
+  // spendingListFiltered.value = spendingList.value;
 })
 </script>
 

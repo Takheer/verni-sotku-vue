@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang='ts'>
-import {ref, watch} from "vue";
+import {ref, unref, watch} from "vue";
 
 type TProps = {
   placeholder?: string,
@@ -42,6 +42,6 @@ function calculateValue(value: string) {
 }
 
 watch(() => props.value, (newVal) => {
-  rawValue.value = newVal.toString();
+  rawValue.value = unref(newVal).toString()
 })
 </script>

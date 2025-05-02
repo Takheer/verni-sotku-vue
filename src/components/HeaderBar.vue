@@ -9,8 +9,8 @@
       <RouterLink class='header-link' to='/about'>
         О нас
       </RouterLink>
-      <RouterLink v-if='store.user.value.name' class='header-link'  :to='`/user/${uid}`'>
-        {{ store.user.value.name }} 😎
+      <RouterLink v-if='store.user?.name' class='header-link'  :to='`/user/${store.user.uuid}`'>
+        {{ store.user.name }} 😎
       </RouterLink>
       <RouterLink v-else class='header-link' to='/user/sign-in'>
         Войти 🐺

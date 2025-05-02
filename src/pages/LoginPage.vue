@@ -19,17 +19,15 @@ enum steps {
 const credential = ref('')
 
 const currentStep = ref(steps.INPUT_CREDENTIAL);
-const store = useUserStore();
-const authApi = useAuthApi();
+const userStore = useUserStore();
 
 function onSetCredential(e: string) {
   credential.value = e;
   currentStep.value = steps.INPUT_CODE;
 }
 
-async function onAuthSuccess(result: any) {
-  console.log({result})
-  store.user.value = await authApi.getCurrentUser()
+async function onAuthSuccess() {
+  await userStore.getCurrentUser()
   currentStep.value = steps.DONE;
 }
 

@@ -22,7 +22,7 @@ export const useAuthApi = () => {
 
       const result = await res.json();
       if (result.access_token) {
-        document.cookie = `token=${result.access_token}; path=/; max-age=86400; secure; samesite=lax;`
+        document.cookie = `token=${result.access_token}; path=/; max-age=${86400*30}; secure; samesite=lax;`
         return { success: true }
       }
       return { success: false }
@@ -41,5 +41,15 @@ export const useAuthApi = () => {
     return await res.json()
   }
 
-  return { sendCodeToEmail, auth, getCurrentUser }
+  async function getCurrentUserGroups() {
+    const res = await fetch(apiUrl + `/user/groups`, {
+      headers: {
+        'Authorization': `Bearer ${getCookie('token')}`
+      }
+    });
+
+    return await res.json()
+  }
+
+  return { sendCodeToEmail, auth, getCurrentUser, getCurrentUserGroups }
 }

@@ -1,12 +1,12 @@
 <template>
   <form class='form' @submit.prevent='addSpending'>
-    <select id='people' v-model='who'>
-      <option class='disabled' value='' disabled selected>Кто купил</option>
-      <option v-for='person of peopleWho' :key='person.id' :value='person.name'>{{ person.name }}</option>
-    </select>
+<!--    <select id='people' v-model='who'>-->
+<!--      <option class='disabled' value='' disabled selected>Кто купил</option>-->
+<!--      <option v-for='person of peopleWho' :key='person.id' :value='person.name'>{{ person.name }}</option>-->
+<!--    </select>-->
     <select id='people' v-model='whom'>
       <option class='disabled' value='' disabled selected>Кому купил</option>
-      <option v-for='person of peopleWhom' :key='person.id' :value='person.name'>{{ person.name }}</option>
+      <option v-for='person of peopleWhom' :key='person.id' :value='person.id'>{{ person.name }}</option>
     </select>
     <CalculatorInput placeholder='Сумма' :value='rawSum' @calculate='setCalcValue' @calculate-error='setCalcError'/>
     <div class='calculated-value'>{{ calculatedSum }}</div>
@@ -18,7 +18,8 @@
 
 <script setup lang='ts'>
 import CalculatorInput from '@/components/CalculatorInput.vue'
-import {ref} from "vue";
+import {ref, unref} from "vue";
+import type {TUser} from "@/db/useSpendingsApi.ts";
 
 type ValuesPair = {
   value: number
@@ -26,8 +27,8 @@ type ValuesPair = {
 }
 
 type TProps = {
-  peopleWho: any[],
-  peopleWhom: any[]
+  peopleWho: TUser[],
+  peopleWhom: TUser[]
 };
 const props = defineProps<TProps>();
 type TEmits = {
@@ -44,12 +45,18 @@ const calculatedSum = ref<number | null>(0)
 const calcError = ref<string>('')
 
 function addSpending() {
-  if (!(who.value && whom.value && calculatedSum.value && comment.value)) {
+  if (!(whom.value && calculatedSum.value && comment.value)) {
     return;
   }
-  rawSum.value = calculatedSum.value.toString();
+  // rawSum.value = calculatedSum.value.toString();
 
-  emits('add-spending', { who: who.value, whom: whom.value, sum: calculatedSum.value, comment: comment.value })
+  emits('add-spending', {
+    whoId: who.value,
+    whomId: whom.value,
+    sum: calculatedSum.value,
+    calculationBreakdown: unref(rawSum.value),
+    comment: comment.value
+  })
 
   who.value = '';
   whom.value = '';
