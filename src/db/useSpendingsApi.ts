@@ -46,7 +46,6 @@ export type TSpendingGroupDto = {
   created_at: string
   creator: TUserDto
   users: TUserDto[]
-  spendings: TSpendingDto[]
 }
 
 export type TSpendingGroup = Omit<TSpendingGroupDto, 'creator_id' | 'created_at' | 'users' | 'creator' | 'spendings'> & {
@@ -54,7 +53,6 @@ export type TSpendingGroup = Omit<TSpendingGroupDto, 'creator_id' | 'created_at'
   createdAt: string
   creator: TUser
   users: TUser[]
-  spendings: TSpending[]
 }
 
 const parseUserFromDto = (user: TUserDto): TUser => {
@@ -84,7 +82,6 @@ const parseSpendingGroupFromDto = (spendingGroup: TSpendingGroupDto): TSpendingG
     createdAt: spendingGroup.created_at,
     creator: parseUserFromDto(spendingGroup.creator),
     users: spendingGroup.users.map(u => parseUserFromDto(u)),
-    spendings: spendingGroup.spendings.map(s => parseSpendingFromDto(s))
   }
 }
 

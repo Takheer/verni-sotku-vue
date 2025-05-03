@@ -11,7 +11,11 @@ type TEmits = {
 const emits = defineEmits<TEmits>();
 
 type TProps = {
-  credential: string
+  credential: {
+    email: string
+    name: string
+    isRegistration: boolean
+  }
 };
 const props = defineProps<TProps>();
 
@@ -19,7 +23,7 @@ const SECONDS_TO_RESEND = 60;
 
 const authApi = useAuthApi();
 
-let confirmationTickInterval = null
+let confirmationTickInterval: number | undefined
 
 const code = ref('');
 const inputDisabled = ref(false);
@@ -30,8 +34,13 @@ const confirmationTickTimeFormatted = computed(
   () => `${confirmationTickTime.value} ${pluralize(confirmationTickTime.value, "секунду", "секунды", "секунд")}`
 );
 
-function sendCode() {
-  authApi.sendCodeToEmail(props.credential);
+async function sendCode() {
+  if (props.credential.isRegistration && !props.credential.name) {
+    return;
+  }
+  props.credential.isRegistration
+    ? await authApi.createUser(props.credential.email, props.credential.name)
+    : await authApi.sendCodeToEmail(props.credential.email);
 
   confirmationTickTime.value = SECONDS_TO_RESEND
   confirmationRecentlySent.value = true;
@@ -40,7 +49,7 @@ function sendCode() {
   setTimeout(() => {
     confirmationRecentlySent.value = false;
     clearInterval(confirmationTickInterval)
-    confirmationTickInterval = null;
+    confirmationTickInterval = undefined;
     confirmationTickTime.value = 0
   }, SECONDS_TO_RESEND * 1000)
 }
@@ -52,7 +61,7 @@ watch(code, async (newVal: string) => {
     return
   }
   inputDisabled.value = true;
-  const authResult = await authApi.auth(props.credential, newVal);
+  const authResult = await authApi.auth(props.credential.email, newVal);
   authResult.success ? emits('success', authResult) : emits('fail')
   inputDisabled.value = false;
 })
@@ -60,8 +69,11 @@ watch(code, async (newVal: string) => {
 
 <template>
   <div class="flex flex-col p-8 gap-4 shadow-lg rounded-2xl">
-    <p class="text-lg md:text-xl">Отправили код на {{ credential }}</p>
-    <p class="text-sm md:text-base font-light">Напишите его, чтобы подтвердить, что это вы, а не кто-то другой входит в личный кабинет</p>
+    <p class="text-lg md:text-xl">Отправили код на {{ credential.email }}</p>
+    <p class="text-sm md:text-base font-light">
+      Напишите его, чтобы подтвердить, что это вы, а не кто-то другой входит в личный кабинет.
+      Если письмо не пришло, проверьте папку "Спам"
+    </p>
     <input
       v-model="code"
       placeholder="Код подтверждения"

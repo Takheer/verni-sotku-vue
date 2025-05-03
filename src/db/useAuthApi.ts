@@ -1,4 +1,5 @@
 import {getCookie} from "@/utils/cookies.ts";
+import type {TSpendingGroup} from "@/db/useSpendingsApi.ts";
 
 export const useAuthApi = () => {
   const apiUrl = import.meta.env.VITE_API_URL
@@ -41,7 +42,7 @@ export const useAuthApi = () => {
     return await res.json()
   }
 
-  async function getCurrentUserGroups() {
+  async function getCurrentUserGroups(): Promise<TSpendingGroup[]> {
     const res = await fetch(apiUrl + `/user/groups`, {
       headers: {
         'Authorization': `Bearer ${getCookie('token')}`
@@ -51,5 +52,31 @@ export const useAuthApi = () => {
     return await res.json()
   }
 
-  return { sendCodeToEmail, auth, getCurrentUser, getCurrentUserGroups }
+  async function addCurrentUserToGroup(slug: string) {
+    const res = await fetch(apiUrl + `/group/${slug}/add_me`, {
+      headers: {
+        'Authorization': `Bearer ${getCookie('token')}`
+      }
+    });
+
+    return await res.json()
+  }
+
+  async function createUser(email: string, name: string) {
+    const res = await fetch(apiUrl + `/user`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${getCookie('token')}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email,
+        name
+      })
+    });
+
+    return await res.json()
+  }
+
+  return { sendCodeToEmail, auth, getCurrentUser, getCurrentUserGroups, addCurrentUserToGroup, createUser }
 }

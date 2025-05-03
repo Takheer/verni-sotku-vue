@@ -23,6 +23,11 @@ const router = createRouter({
       path: '/spendings/:slug',
       name: 'spendings-slug',
       component: () => import('../pages/SpendingsGroupPage.vue')
+    },
+    {
+      path: '/invite/:slug',
+      name: 'invite-slug',
+      component: () => import('../pages/InviteToGroupPage.vue')
     }
   ],
 })

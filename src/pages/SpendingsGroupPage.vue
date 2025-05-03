@@ -5,7 +5,7 @@ import {onMounted, ref} from "vue";
 import {getStatistics} from "@/db/spendings.ts";
 import {getCookie} from "@/utils/cookies.ts";
 import {useUserStore} from "@/stores/user.ts";
-import {type TSpending, type TUser, useSpendingsApi} from "@/db/useSpendingsApi.ts";
+import {type TSpending, type TSpendingGroup, type TUser, useSpendingsApi} from "@/db/useSpendingsApi.ts";
 import {useRoute} from "vue-router";
 
 export type Person = {
@@ -44,6 +44,7 @@ type StatsTablePair = {
 }
 
 const people = ref<TUser[]>([])
+const groupInfo = ref<TSpendingGroup>({} as TSpendingGroup)
 
 const route = useRoute();
 const userStore = useUserStore();
@@ -85,12 +86,6 @@ function clearFilter() {
 }
 
 onMounted(async () => {
-  console.log(getCookie('token') && !userStore.user?.id)
-  console.log(userStore.user)
-  if (getCookie('token') && !userStore.user?.id) {
-    await userStore.getCurrentUser()
-  }
-  console.log(userStore.user)
   const [groupData, spendingsData] = await Promise.all([
     spendingsApi.getSpendingsGroup(route.params.slug as string),
     spendingsApi.getSpendings(route.params.slug as string)
@@ -98,6 +93,7 @@ onMounted(async () => {
 
   spendingListFiltered.value = spendingsData;
   people.value = groupData.users
+  groupInfo.value = groupData;
 })
 </script>
 

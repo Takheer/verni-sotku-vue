@@ -1,13 +1,12 @@
 <script setup lang="ts">
 
-import {pluralize} from "@/utils/pluralize";
 import {useVuelidate} from "@vuelidate/core";
 import { required, email } from "@/utils/validators";
-import {useAuthApi} from "@/db/useAuthApi";
 import {ref} from "vue";
+import IDButton from "@/components/ui/IDButton.vue";
 
 type TEmits = {
-  (e: 'setCredential', val: string): void
+  (e: 'setCredential', val: any): void
 };
 const emits = defineEmits<TEmits>();
 
@@ -20,6 +19,8 @@ const rules = {
 
 
 const credential = ref('')
+const fullName = ref('')
+const isRegistration = ref(false)
 const v$ = useVuelidate(rules, { credential });
 
 const errorMsg = ref('')
@@ -32,25 +33,39 @@ async function sendConfirmationCode() {
   }
   errorMsg.value = ''
 
-  emits('setCredential', credential.value)
+  emits('setCredential', { email: credential.value, name: fullName.value, isRegistration: isRegistration.value })
 }
 </script>
 
 <template>
 <div class="flex flex-col p-8 gap-4 shadow-lg rounded-2xl">
-  <p class="text-lg md:text-xl font-bold">Войти</p>
+  <p class="text-lg md:text-xl font-bold">{{ isRegistration ? 'Зарегистрироваться' : 'Войти' }}</p>
   <input
     v-model="credential"
     placeholder="Электронная почта"
     :error-message="errorMsg"
     :error="!!errorMsg"
   />
-  <button
+  <input
+    v-if="isRegistration"
+    v-model="fullName"
+    placeholder="Имя"
+    :error-message="errorMsg"
+    :error="!!errorMsg"
+  >
+  <IDButton
     variant="primary"
+    full-width
     @click="sendConfirmationCode"
   >
     Получить код
-  </button>
+  </IDButton>
+  <div
+    class="cursor-pointer hover:text-gray-500"
+    @click="isRegistration = !isRegistration"
+  >
+    {{ isRegistration ? 'Войти' : 'Зарегистрироваться' }}
+  </div>
 </div>
 </template>
 

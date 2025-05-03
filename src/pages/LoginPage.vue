@@ -16,12 +16,12 @@ enum steps {
   LOGGED_IN_ALREADY
 }
 
-const credential = ref('')
+const credential = ref({ email: '', name: '', isRegistration: false })
 
 const currentStep = ref(steps.INPUT_CREDENTIAL);
 const userStore = useUserStore();
 
-function onSetCredential(e: string) {
+function onSetCredential(e: { email: string, name: string, isRegistration: boolean }) {
   credential.value = e;
   currentStep.value = steps.INPUT_CODE;
 }

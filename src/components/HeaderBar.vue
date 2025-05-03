@@ -20,13 +20,17 @@
 </template>
 
 <script setup lang='ts'>
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {useUserStore} from "@/stores/user.ts";
+import {getCookie} from "@/utils/cookies.ts";
 
 const store = useUserStore()
 
-const uid = ref<string>();
-uid.value = store.userId || localStorage?.getItem('userId')
+onMounted(async () => {
+  if (getCookie('token') && !store.user?.id) {
+    await store.getCurrentUser()
+  }
+})
 
 </script>
 
