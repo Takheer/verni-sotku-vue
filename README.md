@@ -1,45 +1,33 @@
-# verni-sotku-vue
+# Verni Sotku
 
-This template should help get you started developing with Vue 3 in Vite.
+Приложение для ведения "торгового баланса": приглашайте друзей и контрагентов, фиксируйте траты и следите за взаимной задолженностью
 
-## Recommended IDE Setup
+### .env-файл
+```
+VITE_API_URL=https://verni-sotku.com
+```
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+### Запуск для локальной разработки
 
 ```sh
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+### Сборка для деплоя в прод 
 
 ```sh
+npm install
 npm run build
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+Эти команды создадут папку `dist`, содержимое которой можно либо положить по FTP на сервер,
+либо указать вашему любимому хостингу как источник файла index.html
 
-```sh
-npm run test:unit
-```
+Для деплоя веб-интерфейса сервер не нужен, достаточно любого простого хостинга, который умеет отдавать статическую страничку
 
-### Lint with [ESLint](https://eslint.org/)
+### Вопросы и предложения
+Этот проект предоставляется "как есть", и вы можете вносить изменения, которые считаете нужными.
+Если считаете, что эти изменения могут быть нужны кому-то ещё -- буду рад принять от вас пулл реквест)
 
-```sh
-npm run lint
-```
+Если нашли баг или хотите запросить новую фичу — создайте Issue на вкладке Issues
