@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
-import {getStatistics} from "@/db/spendings.ts";
-import {getCookie} from "@/utils/cookies.ts";
-import {useUserStore} from "@/stores/user.ts";
 import {useAuthApi} from "@/db/useAuthApi.ts";
 import type {TSpendingGroup} from "@/db/useSpendingsApi.ts";
 import {pluralize} from "../utils/pluralize.ts";

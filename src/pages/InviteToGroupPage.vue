@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useRoute, useRouter} from "vue-router";
 import {onMounted, ref} from "vue";
-import {TSpendingGroup, useSpendingsApi} from "@/db/useSpendingsApi.ts";
+import { type TSpendingGroup, useSpendingsApi } from "@/db/useSpendingsApi.ts";
 import {useUserStore} from "@/stores/user.ts";
 import {useAuthApi} from "@/db/useAuthApi.ts";
 
@@ -11,13 +11,13 @@ const userStore = useUserStore();
 
 const route = useRoute()
 const router = useRouter()
-const groupData = ref<TSpendingGroup>({})
+const groupData = ref<TSpendingGroup>({} as TSpendingGroup)
 
 onMounted(async () => {
   try {
     groupData.value = await spendingsApi.getSpendingsGroup(route.params.slug as string);
   } catch {
-    groupData.value = {}
+    groupData.value = {} as TSpendingGroup
   }
 })
 

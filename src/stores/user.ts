@@ -1,26 +1,14 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import {registerNewUser} from "@/db/auth.ts";
 import {useAuthApi} from "@/db/useAuthApi.ts";
+import type {TUser} from "@/db/useSpendingsApi.ts";
 
 type TCredentials = { email: string, password: string }
 const authApi = useAuthApi()
 
 export const useUserStore = defineStore('counter', () => {
   const userId = ref('')
-  const user = ref({})
-
-  async function createUser({ email , password }: TCredentials) {
-    const res = await registerNewUser(email, password);
-
-    if (res.user) {
-      localStorage.setItem('uid', res.user.uid);
-      userId.value = res.user.uid
-      return { user: res.user }
-    } else {
-      return res;
-    }
-  }
+  const user = ref<TUser>({} as TUser)
 
   async function getCurrentUser() {
     const res = await authApi.getCurrentUser();
@@ -40,5 +28,5 @@ export const useUserStore = defineStore('counter', () => {
     userId.value = '';
   }
 
-  return { userId, user, createUser, getCurrentUser, signOut }
+  return { userId, user, getCurrentUser, signOut }
 })

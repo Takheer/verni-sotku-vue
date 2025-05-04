@@ -2,7 +2,6 @@
 import AddSpendingForm from "@/components/AddSpendingForm.vue";
 import SpendingList from "@/components/SpendingList.vue";
 import {onMounted, ref} from "vue";
-import {getStatistics} from "@/db/spendings.ts";
 import {getCookie} from "@/utils/cookies.ts";
 import {useUserStore} from "@/stores/user.ts";
 import {type TSpending, type TSpendingGroup, type TUser, useSpendingsApi} from "@/db/useSpendingsApi.ts";
@@ -66,8 +65,6 @@ async function addSpending(formData: TSpendingFormData) {
     calculation_breakdown: formData.calculationBreakdown
   });
   clearFilter();
-
-  statsTable.value = await getStatistics();
 }
 
 function filterByDebtor(name: string) {

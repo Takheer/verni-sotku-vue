@@ -4,7 +4,7 @@
     type='text'
     :placeholder='placeholder'
     :value='rawValue'
-    @input='calculateValue($event.target.value)'
+    @input='calculateValue'
   >
 </template>
 
@@ -25,16 +25,17 @@ const emits = defineEmits<TEmits>();
 
 const rawValue = ref<string>(props.value.toString());
 
-function calculateValue(value: string) {
-  rawValue.value = value
-  const valid = value.split('').every((c: string) => '0123456789+-*/().'.includes(c))
+function calculateValue(e: Event) {
+  // @ts-ignore
+  rawValue.value = e.target?.value
+  const valid = rawValue.value.split('').every((c: string) => '0123456789+-*/().'.includes(c))
   if (!valid) {
     emits('calculate-error', 'Используй *, /, +, - и (скобки) для операций, а точку — как десятичный разделитель')
     return;
   }
   try {
     // eslint-disable-next-line no-eval
-    const calcValue = eval(value)
+    const calcValue = eval(rawValue.value)
     emits('calculate', { value: calcValue, rawValue })
   } catch {
     emits('calculate-error', "¯\\_(ツ)_/¯")
